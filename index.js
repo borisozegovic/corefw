@@ -1,32 +1,15 @@
 //globals
-objClasses = {};
-objClassesCall = {};
-GeneralHandling = require('./lib/GeneralHandling.js');
-CfwObject = require('corefwnode/lib/CfwObject.js');
+const Session = require('../objects/Session');
 lib = {};
 
-var Language = require('./lib/Language.js'),
-    Session = require('./objects/Session.js'),
-    LoggingClass = require('./lib/Logging.js'),
-    ErrorControl = require('./lib/ErrorControl.js'),
-    moment = require('moment'),
-    coreModules = require('./modules');
 
-module.exports = class Library
-{
-    constructor(config)
-    {
+/**
+ * This class is a copy/paste of the class from corefwlib, authored by Leapbit.
+ */
+class CoreFw {
+    constructor(config) {
         var me = this;
-
-        console.log = function(...args)
-        {
-            process.stdout.write(moment().format('YYYY-MM-DD HH:mm:ss.SSS') + ': ');
-            Object.getPrototypeOf(this).log.call(this, ...args);
-        }
-
         lib = me;
-
-        me.ErrorControl = ErrorControl;
 
         process.on('unhandledRejection', (reason, p) =>
         {
@@ -35,13 +18,7 @@ module.exports = class Library
         });
 
         me.config = config;
-
         me.SessionClass = Session;
-
-        me.LoggingClass = LoggingClass;
-
-        //init db
-        me.db = new coreModules.MySQL(config.mysql);
 
         (async () =>
         {
@@ -54,22 +31,9 @@ module.exports = class Library
     {
         var me = this;
 
-        objClassesCall = require('./objects')();
-
-        for (var key in objClassesCall)
-        {
-            var obj = objClassesCall[key];
-            objClasses[obj.origName] = obj.class
-        }
-
         try
         {
-            //init language
-            var lang = new Language();
-            await lang.fillTrans();
-            me.lang = lang;
             me.unregisteredSession = new Session();
-
             me.afterinit();
         }
         catch (error)
@@ -78,13 +42,11 @@ module.exports = class Library
         }
     }
 
-    afterinit()
-    {
+    afterinit() {}
 
-    }
+    start() {}
+}
 
-    start()
-    {
-
-    }
+module.exports = {
+    CoreFw,
 }
